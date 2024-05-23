@@ -82,11 +82,32 @@ app.get("/listings/:id/edit",async(req,res)=>{
 res.render("listings/edit.ejs",{listing})
   });
 //update route
-app.put("/listings/:id",async(req,res)=>{
+// app.put("/listings/:id",async(req,res)=>{
+//   let { id } = req.params;
+//   await Listing.findByIdAndUpdate(id,{...req.body.listing});
+//   res.redirect(`/listings/${id}`);
+// });
+app.put("/listings/:id", async (req, res) => {
   let { id } = req.params;
-  await Listing.findByIdAndUpdate(id,{...req.body.listing});
+  const prevListing = await Listing.findById(id);
+  const { title, description, image, price, country, location } = req.body.listing;
+  prevListing.image.url = image;
+
+  const updatedListing = await Listing.findByIdAndUpdate(id, {
+    title,
+    description,
+    image: {
+      filename: prevListing.image.filename,
+      url: prevListing.image.url,
+    },
+    price,
+    country,
+    location,
+  });
+
   res.redirect(`/listings/${id}`);
 });
+
 //delete route
 app.delete("/listings/:id",async(req,res)=>{
   let { id } = req.params;
