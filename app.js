@@ -8,7 +8,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const wrapAsync=require("./utils/wrapAsync.js");
 const ExpressError=require("./utils/ExpressError.js");
-
+const {listingSchema}=require("./schema.js");
 
 // http://localhost:8080/listings
 main()
@@ -33,18 +33,25 @@ app.get("/",(req,res)=>{
     res.send("hello iam root");
 });
 
-app.get("/listings", async (req, res) => {
+const validateListing=(req,res,next)=>{
+  let {error}=listingSchema.validate(req.body);
+ 
+  if(error){
+    let errMsg=error.details.map((el)=>el.message).join(",");
+    throw new ExpressError(400,errMsg);
+  }else{
+    next();
+  }
+
+}
+//Index Route
+app.get("/listings", wrapAsync(async (req, res) => {
     const allListings = await Listing.find({});
 
     res.render("listings/index.ejs", {allListings});
- });
- //show route
-//  app.get("/listings/:id",async(req,res)=>{
-//   let {id}=req.params;
-//   const listing=await Listing.findById(id);
-//   res.render("listings/show.ejs",{listing});
-  
-//  });
+ }));
+
+//New Route
 app.get("/listings/new",(req,res)=>{
   res.render("listings/new.ejs");
 })
@@ -66,9 +73,14 @@ app.get("/listings/:id", async (req, res) => {
 });
 //create route
 
-app.post("/listings", wrapAsync(async (req,res,next) => {
-   if(!req.body.listing){throw new ExpressError(400,"send valid data for listing")}
+app.post("/listings",validateListing, wrapAsync(async (req,res,next) => {
+ let result=listingSchema.validate(req.body);
+  console.log(result);
+  if(result.error){
+    throw new ExpressError(400,result.error);
+  }
   const newListing = new Listing(req.body.listing);
+  
     await newListing.save();
     res.redirect("/listings");
   })
@@ -81,12 +93,8 @@ app.get("/listings/:id/edit",async(req,res)=>{
 res.render("listings/edit.ejs",{listing})
   });
 //update route
-// app.put("/listings/:id",async(req,res)=>{
-//   let { id } = req.params;
-//   await Listing.findByIdAndUpdate(id,{...req.body.listing});
-//   res.redirect(`/listings/${id}`);
-// });
-app.put("/listings/:id", async (req, res) => {
+
+app.put("/listings/:id",validateListing,wrapAsync(async (req, res) => {
   let { id } = req.params;
   const prevListing = await Listing.findById(id);
   const { title, description, image, price, country, location } = req.body.listing;
@@ -105,7 +113,7 @@ app.put("/listings/:id", async (req, res) => {
   });
 
   res.redirect(`/listings/${id}`);
-});
+}));
 
 //delete route
 app.delete("/listings/:id",async(req,res)=>{
