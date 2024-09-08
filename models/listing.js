@@ -30,7 +30,7 @@ const listingSchema = new Schema({
   country: String,
   reviews:[{
     type:Schema.Types.ObjectId,
-    ref:"review",
+    ref:"Review",
   },],
 });
 listingSchema.post("findOneDelete",async(listing)=>{
