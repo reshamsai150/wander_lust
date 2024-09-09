@@ -32,11 +32,12 @@ router.get("/new",(req,res)=>{
 router.get("/:id", async (req, res) => {
   try {
     let { id } = req.params;
-    // const listing = await Listing.findById(id);
+   
     const listing = await Listing.findById(id).populate("reviews");
 
     if (!listing) {
-      return res.status(404).send("Listing not found");
+      req.flash("error","Listing you requested for doesnot exist");
+      res.redirect("/listings");
     }
   
     res.render("listings/show.ejs", { listing }); // Update the path here
@@ -87,7 +88,7 @@ router.post("/",validateListing, wrapAsync(async (req,res,next) => {
        country,
        location,
      });
-   
+     req.flash("success","Listing updated");
      res.redirect(`/listings/${id}`);
    }));
    
@@ -96,6 +97,7 @@ router.post("/",validateListing, wrapAsync(async (req,res,next) => {
      let { id } = req.params;
      const deletedListing= await Listing.findByIdAndDelete(id);
      console.log(deletedListing);
+     req.flash("success"," Listing Deleted");
      res.redirect("/listings");
    }); 
 
