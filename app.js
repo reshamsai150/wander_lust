@@ -10,6 +10,9 @@ const ExpressError=require("./utils/ExpressError.js");
 const session=require("express-session")
 
 const flash=require("connect-flash");
+const passport=require("passport");
+const LocalStrategy=require("pasport-local")
+const User=require("./models/user.js");
 const listings=require("./routes/listing.js");
 const reviews=require("./routes/review.js")
 // http://localhost:8080/listings
@@ -31,7 +34,6 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 
-
 const sessionOptions={
   secret:"mysupersecretcode",
   resave:false,
@@ -45,14 +47,32 @@ const sessionOptions={
 app.get("/",(req,res)=>{
   res.send("Hi Iam root");
 });
+
 app.use(session(sessionOptions));
 app.use(flash());
 
+app.use(passport.initialize());
+app.use(passport.session());
+// it is used to verify whether request sent by same user or diffferent
+passport.use(new LocalStrategy(User.authenticate()));
+
+// use static serialize and deserialize of model for passport session support
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req,res,next)=>{
   res.locals.success=req.flash("success");
-  res.locals.error=req.flash("Error");
+  res.locals.error=req.flash("error");
  next();
 });
+app.get("/demouser",async(req,res)=>{
+  let fakeuser=new User({
+    email:"student@gmail.com",
+    username:"delta-student"
+  });
+  let registeredUser= await User.register(fakeUser,"helloworld");
+  res.send(registeredUser);
+})
 app.use("/listings",listings);
 app.use("/listings/:id/reviews",reviews);
 
