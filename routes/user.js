@@ -19,9 +19,11 @@ router.post("/signup",wrapAsync(async(req,res)=>{
  res.redirect("/signup");
   }
     
-   
 }));
 router.get("/login",(req,res)=>{
-    res.render("user/login.ejs");
+    res.render("user/login");
+});
+router.post("/login",passport.authenticate(),async(req,res)=>{
+
 })
 module.exports=router;
