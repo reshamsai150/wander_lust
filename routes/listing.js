@@ -34,13 +34,13 @@ router.get("/:id", async (req, res) => {
   try {
     let { id } = req.params;
    
-    const listing = await Listing.findById(id).populate("reviews");
+    const listing = await Listing.findById(id).populate("reviews").populate("owner");
 
     if (!listing) {
       req.flash("error","Listing you requested for doesnot exist");
       res.redirect("/listings");
     }
-  
+   console.log(listing);
     res.render("listings/show.ejs", { listing }); // Update the path here
   } catch (error) {
     console.error(error);
@@ -57,7 +57,7 @@ router.post("/",isLoggedIn,validateListing, wrapAsync(async (req,res,next) => {
        throw new ExpressError(400,result.error);
      }
      const newListing = new Listing(req.body.listing);
-     
+     newListing.owner=req.user._id;
        await newListing.save();
        req.flash("success","New Listing Created");
        res.redirect("/listings");
