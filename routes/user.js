@@ -6,7 +6,7 @@ const passport = require("passport");
 router.get("/signup",(req,res)=>{
     res.render("users/signup.ejs");
 });
-
+const {saveRedirectUrl}=require("../middleware.js");
 router.post("/signup",wrapAsync(async(req,res)=>{
   try{
     let {username,email,password}=req.body;
@@ -30,13 +30,21 @@ router.post("/signup",wrapAsync(async(req,res)=>{
 router.get("/login",(req,res)=>{
     res.render("users/login.ejs");
 });
+// router.post("/login",saveRedirectUrl,passport.authenticate('local',{ 
+//   failureRedirect: '/login' ,
+//   failureFlash:true
+// }),
+//   async(req,res)=>{
+//  req.flash("success","welcome back to wanderlust");
+//  res.redirect(res.locals.redirectUrl);
+// });
 router.post("/login",saveRedirectUrl,passport.authenticate('local',{ 
   failureRedirect: '/login' ,
   failureFlash:true
-}),
-  async(req,res)=>{
- req.flash("success","welcome back to wanderlust");
- res.redirect(res.locals.redirectUrl);
+}),async(req,res)=>{
+    req.flash("success","welcome to wonderlust! you are logged in!");
+    let redirectUrl =res.locals.redirectUrl || "/listings";
+    res.redirect(redirectUrl);
 });
 
 router.get("/logout",(req,res,next)=>{
