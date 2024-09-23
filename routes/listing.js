@@ -5,7 +5,7 @@ const ExpressError=require("../utils/ExpressError.js");
 
 const {listingSchema}=require("../schema.js");
 const Listing=require("../models/listing.js");
-
+const {isLoggedIn}=require("../middleware.js");
 
 const validateListing=(req,res,next)=>{
     let {error}=listingSchema.validate(req.body);
@@ -25,7 +25,8 @@ router.get("/", wrapAsync(async (req, res) => {
  }));
 
 //New Route
-router.get("/new",(req,res)=>{
+router.get("/new",isLoggedIn,(req,res)=>{
+
   res.render("listings/new.ejs");
 })
 //show route
@@ -49,7 +50,7 @@ router.get("/:id", async (req, res) => {
 
 //create route
 
-router.post("/",validateListing, wrapAsync(async (req,res,next) => {
+router.post("/",isLoggedIn,validateListing, wrapAsync(async (req,res,next) => {
     let result=listingSchema.validate(req.body);
      console.log(result);
      if(result.error){
@@ -64,7 +65,7 @@ router.post("/",validateListing, wrapAsync(async (req,res,next) => {
    );
    
    //edit route
-   router.get("/:id/edit",async(req,res)=>{
+   router.get("/:id/edit",isLoggedIn,async(req,res)=>{
      let { id } = req.params;
        const listing = await Listing.findById(id);
        if (!listing) {
@@ -74,8 +75,8 @@ router.post("/",validateListing, wrapAsync(async (req,res,next) => {
    res.render("listings/edit.ejs",{listing})
      });
    //update route
-   
-   router.put("/:id",validateListing,wrapAsync(async (req, res) => {
+  //  isLoggedIn is the middleware checks whether user is loggedin or not
+   router.put("/:id",isLoggedIn,validateListing,wrapAsync(async (req, res) => {
      let { id } = req.params;
      const prevListing = await Listing.findById(id);
      const { title, description, image, price, country, location } = req.body.listing;
@@ -97,7 +98,7 @@ router.post("/",validateListing, wrapAsync(async (req,res,next) => {
    }));
    
    //delete route
-   router.delete("/:id",async(req,res)=>{
+   router.delete("/:id",isLoggedIn,async(req,res)=>{
      let { id } = req.params;
      const deletedListing= await Listing.findByIdAndDelete(id);
      console.log(deletedListing);
