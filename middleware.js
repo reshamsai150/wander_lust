@@ -1,10 +1,10 @@
 const Listing=require("./models/listing");
-
+const ExpressError=require("./utils/ExpressError.js");
+const {listingSchema,reviewSchema}=require("./schema.js");
 module.exports.isLoggedIn=(req,res,next)=>{
-  // checks whether user is logged in or not
     if(!req.isAuthenticated())
         {
-         req.session.redirectUrl=req.originalUrl;
+          req.session.redirectUrl=req.originalUrl;
           req.flash("error","you must be logged in to create Listing!");
            return res.redirect("/login");
         }
@@ -18,12 +18,23 @@ module.exports.saveRedirectUrl=(req,res,next)=>{
 };
 
 module.exports.isOwner=async(req,res,next)=>{
-  let { id } = req.params;
-  let listing=await Listing.findById(id);
- const prevListing = await Listing.findById(id);
- 
- if(!listing.owner._id.equals(res.locals.currUser._id)){
-  req.flash("error","you don't have permission to edit");
-  return res.redirect(`/listings/${id}`);
- }
-}
+  let {id}=req.params;
+      let listing=await Listing.findById(id);
+          if(!listing.owner._id.equals(req.user._id)){
+              req.flash("error","you dont have permission to make changes");
+              return res.redirect(`/listings/${id}`);
+          }
+          next();
+  
+  };
+
+  module.exports.validateReview=(req,res,next)=>{
+    let {error}=listingSchema.validate(req.body);
+    if(error){
+      let errMsg=error.details.map((el)=>el.message).join(",");
+      throw new ExpressError(400,errMsg);
+    }else{
+      next();
+    }
+  };
+
