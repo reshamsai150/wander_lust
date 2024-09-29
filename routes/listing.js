@@ -5,7 +5,7 @@ const ExpressError=require("../utils/ExpressError.js");
 
 const {listingSchema}=require("../schema.js");
 const Listing=require("../models/listing.js");
-const {isLoggedIn}=require("../middleware.js");
+const {isLoggedIn,isOwner}=require("../middleware.js");
 
 const validateListing=(req,res,next)=>{
     let {error}=listingSchema.validate(req.body);
@@ -77,11 +77,13 @@ router.post("/",isLoggedIn,validateListing, wrapAsync(async (req,res,next) => {
      });
    //update route
   //  isLoggedIn is the middleware checks whether user is loggedin or not
-   router.put("/:id",isLoggedIn,validateListing,wrapAsync(async (req, res) => {
+   router.put("/:id",isLoggedIn,
+   isOwner,validateListing,wrapAsync(async (req, res) => {
      let { id } = req.params;
       let listing=await Listing.findById(id);
      const prevListing = await Listing.findById(id);
-     if(!currUser && listing.owner._id.equals(res.locals.currUser._id)){
+     
+     if(!listing.owner._id.equals(res.locals.currUser._id)){
       req.flash("error","you don't have permission to edit");
       return res.redirect(`/listings/${id}`);
      }
