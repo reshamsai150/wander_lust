@@ -57,6 +57,7 @@ router.post("/",isLoggedIn,validateListing, wrapAsync(async (req,res,next) => {
        throw new ExpressError(400,result.error);
      }
      const newListing = new Listing(req.body.listing);
+  
      newListing.owner=req.user._id;
        await newListing.save();
        req.flash("success","New Listing Created");
@@ -78,7 +79,12 @@ router.post("/",isLoggedIn,validateListing, wrapAsync(async (req,res,next) => {
   //  isLoggedIn is the middleware checks whether user is loggedin or not
    router.put("/:id",isLoggedIn,validateListing,wrapAsync(async (req, res) => {
      let { id } = req.params;
+      let listing=await Listing.findById(id);
      const prevListing = await Listing.findById(id);
+     if(!currUser && listing.owner._id.equals(res.locals.currUser._id)){
+      req.flash("error","you don't have permission to edit");
+      return res.redirect(`/listings/${id}`);
+     }
      const { title, description, image, price, country, location } = req.body.listing;
      prevListing.image.url = image;
    
@@ -93,6 +99,7 @@ router.post("/",isLoggedIn,validateListing, wrapAsync(async (req,res,next) => {
        country,
        location,
      });
+     
      req.flash("success","Listing updated");
      res.redirect(`/listings/${id}`);
    }));
