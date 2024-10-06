@@ -1,4 +1,5 @@
 const Listing=require("./models/listing");
+const Review=require("./models/review")
 const ExpressError=require("./utils/ExpressError.js");
 const {listingSchema,reviewSchema}=require("./schema.js");
 
@@ -49,3 +50,13 @@ module.exports.validateReview=(req,res,next)=>{
      }
   
   }
+  module.exports.isReviewAuthor=async(req,res,next)=>{
+    let {reviewId}=req.params;
+        let listing=await Review.findById(reviewId);
+            if(!listing.owner._id.equals(req.user._id)){
+                req.flash("error","you dont have permission to make changes");
+                return res.redirect(`/listings/${id}`);
+            }
+            next();
+    
+    };
