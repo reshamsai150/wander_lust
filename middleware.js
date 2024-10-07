@@ -50,13 +50,31 @@ module.exports.validateReview=(req,res,next)=>{
      }
   
   }
-  module.exports.isReviewAuthor=async(req,res,next)=>{
-    let {reviewId}=req.params;
-        let listing=await Review.findById(reviewId);
-            if(!listing.owner._id.equals(req.user._id)){
-                req.flash("error","you dont have permission to make changes");
-                return res.redirect(`/listings/${id}`);
-            }
-            next();
+  // module.exports.isReviewAuthor=async(req,res,next)=>{
+  //   let {reviewId}=req.params;
+  //       let listing=await Review.findById(reviewId);
+  //           if(!listing.owner._id.equals(req.user._id)){
+  //               req.flash("error","you dont have permission to make changes");
+  //               return res.redirect(`/listings/${id}`);
+  //           }
+  //           next();
     
-    };
+  //   };
+
+  module.exports.isReviewAuthor = async (req, res, next) => {
+    const { reviewId, id } = req.params; 
+    const review = await Review.findById(reviewId);
+    
+    if (!review) {
+      req.flash("error", "Review not found");
+      return res.redirect(`/listings/${id}`);
+    }
+  
+    if (!review.author.equals(req.user._id)) {
+      req.flash("error", "You do not have permission to make changes to this review");
+      return res.redirect(`/listings/${id}`);
+    }
+  
+    next();
+  };
+  
