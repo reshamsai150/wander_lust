@@ -26,8 +26,9 @@
     </div>
     <% } %>
     <div class="col-8 offset-3 mb-3">
-        <hr>
         <% if(currUser) { %>
+            <hr>
+
         <h4>Leave a Review</h4>
         <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation">
        
@@ -59,9 +60,10 @@
             </div>
         </form>
         <% } %>
-        <h4>All Reviews</h4>
+        
         <% if (listing.reviews && listing.reviews.length > 0) { %>
             <div class="row">
+                <h4>All Reviews</h4>
                 <% for (review of listing.reviews) { %>
                     <div class="card col-5 mb-3 ms-3">
                         <div class="card-body">
@@ -87,6 +89,24 @@
                     </div>
                 <% } %>
             </div>
+            <div class="col-6 offset-3 mb-3">
+              <h3>where you'll be</h3>  
+              <div class="map"></div>
+            </div>
+            <script>
+                // TO MAKE THE MAP APPEAR YOU MUST
+                // ADD YOUR ACCESS TOKEN FROM
+                // https://account.mapbox.
+                let mapToken=" <%= process.env.MAP_TOKEN %>";
+                console.log(mapToken);
+                mapboxgl.accessToken = mapToken;
+                const map = new mapboxgl.Map({
+                    container: 'map', // container ID
+                    center: [-74.5, 40], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+                    zoom: 9 // starting zoom
+                });
+            </script>
+            
         <% } else { %>
             <p>No reviews available.</p>
         <% } %>
