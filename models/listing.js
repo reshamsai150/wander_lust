@@ -24,6 +24,11 @@ const listingSchema = new Schema({
     type:Schema.Types.ObjectId,
     ref:"User",
   },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: [Number],
+    requires:true
+  }
 });
 listingSchema.post("findOneDelete",async(listing)=>{
   if(listing){
