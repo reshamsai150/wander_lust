@@ -24,15 +24,17 @@ const listingSchema = new Schema({
     ref: "User", // Reference to the User model
     required: true, // Owner is required for each listing
   },
-  geometry:{
-    type:String,
-    enum: ['point'],
-    required: true
-  },
-  coordinates: {
-    type: [Number],
-    requires: true
-  }
+  geometry: {
+    type: {
+        type: String, // e.g., 'Point'
+        enum: ['Point'], // Only 'Point' is allowed
+        required: true,
+    },
+    coordinates: {
+        type: [Number], // Array of numbers for [longitude, latitude]
+        required: true,
+    }
+},
 });
 
 listingSchema.post("findOneDelete", async (listing) => {
