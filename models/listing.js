@@ -33,7 +33,8 @@ const listingSchema = new Schema({
     coordinates: {
         type: [Number], // Array of numbers for [longitude, latitude]
         required: true,
-    }
+    },
+   
 },
 });
 
