@@ -5,14 +5,14 @@ if (coordinates.length == 0) {
 mapboxgl.accessToken = mapToken;
 const map = new mapboxgl.Map({
   container: "map", // container ID
-  center: listing.geometrycoordinates, // starting position [lng, lat]. Note that lat must be set between -90 and 90
+  center: coordinates, // starting position [lng, lat]. Note that lat must be set between -90 and 90
   zoom: 9, // starting zoom
 });
 
-console.log(coordinate);
+console.log(coordinates);
 
 const marker = new mapboxgl.Marker({ color: "red" })
-  .setLngLat(listing.geometry.coordinates)
+  .setLngLat(coordinates)
   .setPopup(
     new mapboxgl.Popup({ offset: 25 }).setHTML(
       `<h4>${listing.location}</h4>
@@ -20,6 +20,6 @@ const marker = new mapboxgl.Marker({ color: "red" })
     )
   )
   .addTo(map);
-  
+
 
 // .addTo(map);
