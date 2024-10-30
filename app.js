@@ -3,26 +3,26 @@ if(process.env.NODE_ENV !="production"){
 }
 
 
-const express=require("express");
-const app=express();
-const mongoose=require("mongoose");
+const express= require("express");
+const app= express();
+const mongoose= require("mongoose");
 
-const path=require("path");
+const path= require("path");
 // const MONGO_URL="mongodb://127.0.0.1:27017/wanderlust";
-const dbUrl=process.env.ATSLASDB_URL;
+const dbUrl= process.env.ATLASDB_URL;
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
-const ExpressError=require("./utils/ExpressError.js");
-const session=require("express-session")
+const ExpressError= require("./utils/ExpressError.js");
+const session= require("express-session")
 
-const flash=require("connect-flash");
-const passport=require("passport");
-const LocalStrategy=require("passport-local")
-const User=require("./models/user.js");
-const listingRouter=require("./routes/listing.js");
+const flash= require("connect-flash");
+const passport= require("passport");
+const LocalStrategy= require("passport-local")
+const User= require("./models/user.js");
+const listingRouter= require("./routes/listing.js");
 
-const reviewRouter=require("./routes/review.js")
-const userRouter=require("./routes/user.js");
+const reviewRouter= require("./routes/review.js")
+const userRouter= require("./routes/user.js");
 
 // http://localhost:8080/listings
 main()
@@ -70,10 +70,9 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use((req,res,next)=>{
-  res.locals.success=req.flash("success");
-  res.locals.error=req.flash("error");
-  res.locals.currUser=req.user;
- next();
+  res.locals.success= req.flash("success");
+  res.locals.error= req.flash("error");
+  next();
 });
 // app.get("/demouser",async(req,res)=>{
 //   let fakeUser=new User({
