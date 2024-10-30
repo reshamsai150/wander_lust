@@ -5,6 +5,7 @@
     #filters{
      display:flex;
      flex-wrap:wrap;
+     align-items:center;
     }
     .filter{
       text-align:center;
@@ -22,6 +23,15 @@
     }
 .tax-info{
   display:none;
+}
+.tax-toggle{
+  border:1px solid black;
+  border-radius:1rem;
+  height:3.25rem;
+  padding:1rem;
+  margin-left:2rem;
+  display:flex;
+  align-items:center;
 }
   </style>
       <div id="filters">
@@ -63,6 +73,14 @@
   <div><i class="fa-solid fa-snowflake"></i></div>
 <p>Artic </p>
 </div>
+<div class="filter">
+  <div><i class="fa-solid fa-igloo"></i></div>
+  <p>Domes</p>
+</div>
+<div class="filter">
+  <div><i class="fa-solid fa-sailboat"></i></div>
+<p>Boats </p>
+</div>
 <div class="tax-toggle">
   <div class="form-check-reverse form-switch">
     <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
@@ -92,8 +110,15 @@
 <script>
   let taxSwitch=document.getElementById("flexSwitchCheckDefault");
   taxSwitch.addEventListener("click",()=>{
-    let taxInfo=document.getElementByClassName("tax-info");
-    console.log(taxInfo);
+    let taxInfo=document.getElementsByClassName("tax-info");
+    for(info of taxInfo){
+      if(info.style.display!="inline"){
+      info.style.display="inline";
+      }else{
+        info.style.display="none";
+      }
+      
+    }
   });
  
 </script>
