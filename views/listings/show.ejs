@@ -23,7 +23,7 @@
       </div>
   
       <br/>
-      <% if(locals.currUser && listing.owner && listing.owner._id && listing.owner._id.equals(locals.currUser._id)) { %>
+      <% if(currUser && listing.owner && listing.owner._id && listing.owner._id.equals(currUser._id)) { %>
       <div class="btns">
           <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark col-1 offset-3 edit-btn">Edit</a>
           <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
@@ -32,7 +32,7 @@
       </div>
       <% } %>
       <div class="col-8 offset-3 mb-3">
-          <% if(locals.currUser) { %>
+          <% if(currUser) { %>
               <hr>
   
           <h4>Leave a Review</h4>
