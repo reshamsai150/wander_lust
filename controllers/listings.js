@@ -72,22 +72,24 @@ console.log(savedListing);
       res.render("listings/edit.ejs",{listing,originalImageUrl})
         }
 
-    module.exports.updateListing=async (req, res) => {
-        let { id } = req.params;
-         let listing=await Listing.findById(id);
-         if(req.file){
-          let url=req.file.path;
-          let filename=req.file.filename;
-          listing.image={url,filename};
-          await listing.save();
-         }
-      
-        const prevListing = await Listing.findById(id);
+        module.exports.updateListing=async (req, res) => {
+          let{id}=req.params;
+    
         
-        if(!listing.owner._id.equals(res.locals.currUser._id)){
-         req.flash("error","you don't have permission to edit");
-         return res.redirect(`/listings/${id}`);
-        }
+          let listing= await Listing.findByIdAndUpdate(id,{...req.body});
+       
+           if(typeof req.file!="undefined"){
+           let url=req.file.path;
+           let filename=req.file.filename;
+            listing.image={url,filename};
+            await listing.save();
+           }
+       
+       
+           req.flash("success","listing Updated successfully!");
+       
+        res.redirect(`/listings/${id}`);
+          }
         const { title, description, image, price, country, location } = req.body.listing;
         prevListing.image.url = image;
       
