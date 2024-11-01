@@ -90,24 +90,8 @@ console.log(savedListing);
        
         res.redirect(`/listings/${id}`);
           }
-        const { title, description, image, price, country, location } = req.body.listing;
-        prevListing.image.url = image;
+  
       
-        const updatedListing = await Listing.findByIdAndUpdate(id, {
-          title,
-          description,
-          image: {
-            filename: prevListing.image.filename,
-            url: prevListing.image.url,
-          },
-          price,
-          country,
-          location,
-        });
-        
-        req.flash("success","Listing updated");
-        res.redirect(`/listings/${id}`);
-      }
 
       module.exports.destroyListing=async(req,res)=>{
         let { id } = req.params;
