@@ -40,10 +40,10 @@
         </div>
           <div class="navbar-nav ms-auto">
             <a class="nav-link" href="/listings/new">Airbnb your Home</a>
-          <% if(!locals.currUser){%>
+          <% if(currUser){%>
             <a class="nav-link"  href="/signup"><b>Signup</b></a>
             <a class="nav-link" href="/login"><b>Login</b></a> <% } %>
-           <% if(locals.currUser)  {%> <a class="nav-link" href="/logout">Logout</a>
+           <% if(currUser)  {%> <a class="nav-link" href="/logout">Logout</a>
            <% } %>
           </div>
         </div>
